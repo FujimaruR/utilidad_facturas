@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+          <record id="utilidadfac_invoice_xls" model="ir.actions.report">
+            <field name="name">Invoice Excel Utilidad Facturacion</field>
+            <field name="model">xls.invoice.utilidadfac</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">utilidad_facturas.invoice_xlsx</field>
+            <field name="attachment_use">True</field>
+        </record>
+    </data>
+</odoo>
