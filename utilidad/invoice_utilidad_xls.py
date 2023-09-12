@@ -12,7 +12,7 @@ class InvoiceUtilidadXls(models.AbstractModel):
             ('invoice_date', '>=', obj.fecha_ini),
             ('invoice_date', '<=', obj.fecha_fin),
             ('move_type', '=', 'out_invoice'),
-            ('state', '!=', 'draft'),
+            ('state', '=', 'posted'),
         ]
 
         receipt_ids = self.env['account.move'].search(domain)
@@ -43,14 +43,14 @@ class InvoiceUtilidadXls(models.AbstractModel):
                 'Nfactura': line.number_folio,
                 'RFC': line.partner_id.vat,
                 'Rsocial': line.partner_id.name,
-                'Subtotal': line.subtotal, #tal vez
+                'Subtotal': line.subtotal,
                 'Descuentos': line.discount,
                 'ExcentoIva': EI,
                 'ImpuestoU': IU,
                 'ImpuestoD': ID,
                 'ImpuestoT': IT,
-                'Total': line.total_factura, #tal vez
-                'FechaF': line.invoice_date, #tal vez
+                'Total': line.total_factura, 
+                'FechaF': line.invoice_date, 
                 'FechaT': line.fecha_factura,
             }
             lines.append(vals)
@@ -63,6 +63,7 @@ class InvoiceUtilidadXls(models.AbstractModel):
             worksheet = workbook.add_worksheet('Reporte de utilidad')
             bold = workbook.add_format({'bold': True, 'align': 'center'})
             text = workbook.add_format({'font_size': 12, 'align': 'center'})
+            money_format = workbook.add_format({'num_format': '$#,##0.00', 'align': 'center'})
 
             worksheet.merge_range('A1:B1', 'Ingresos Ventas', bold)
             worksheet.set_row(0, 30)
@@ -103,15 +104,15 @@ class InvoiceUtilidadXls(models.AbstractModel):
                 worksheet.write(row, col + 2, res['Nfactura'], text)
                 worksheet.write(row, col + 3, res['RFC'], text)
                 worksheet.write(row, col + 4, res['Rsocial'], text)
-                worksheet.write(row, col + 5, str(self.env.user.company_id.currency_id.symbol) + str(res['Subtotal']), text)
-                worksheet.write(row, col + 6, str(self.env.user.company_id.currency_id.symbol) + str(res['Descuentos']), text)
-                worksheet.write(row, col + 7, str(self.env.user.company_id.currency_id.symbol) + str(res['ExcentoIva']), text)
-                worksheet.write(row, col + 8, str(self.env.user.company_id.currency_id.symbol) + str(res['ImpuestoU']), text)
-                worksheet.write(row, col + 9, str(self.env.user.company_id.currency_id.symbol) + str(res['ImpuestoD']), text)
-                worksheet.write(row, col + 10, str(self.env.user.company_id.currency_id.symbol) + str(res['ImpuestoT']), text)
-                worksheet.write(row, col + 11, str(self.env.user.company_id.currency_id.symbol) + str(res['Total']), text)
+                worksheet.write(row, col + 5, float(res['Subtotal']), text)
+                worksheet.write(row, col + 6, float(res['Descuentos']), money_format)
+                worksheet.write(row, col + 7, float(res['ExcentoIva']), money_format)
+                worksheet.write(row, col + 8, float(res['ImpuestoU']), money_format)
+                worksheet.write(row, col + 9, float(res['ImpuestoD']), money_format)
+                worksheet.write(row, col + 10, float(res['ImpuestoT']), money_format)
+                worksheet.write(row, col + 11, float(res['Total']), money_format)
                 fecha = res['FechaF'].strftime('%d/%m/%Y')
                 worksheet.write(row, col + 12, fecha, text)
-                fechad = res['FechaT'].strftime('%d/%m/%Y')
+                fechad = res['FechaT'].strftime('%d/%m/%Y') if res['FechaT'] else ''
                 worksheet.write(row, col + 13, fechad, text)
                 row = row + 1

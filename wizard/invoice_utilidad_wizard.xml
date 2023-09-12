@@ -23,7 +23,7 @@
     </record>
 
     <record id="action_cantu_invoice_utilidad_menu" model="ir.actions.act_window">
-        <field name="name">Utilidad</field>
+        <field name="name">Reporte facturacion</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">xls.invoice.utilidadfac</field>
         <field name="view_mode">form</field>
@@ -33,7 +33,7 @@
 
     <menuitem
         id="menu_cantu_invoice_utilidad"
-        name="Reporte de Utilidad"
+        name="Facturacion"
         parent="account.menu_finance_reports"
         action="action_cantu_invoice_utilidad_menu"
         sequence="0"
